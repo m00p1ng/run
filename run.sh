@@ -1,5 +1,7 @@
 RUN_PYTHON="python"
-RUN_GO="go run"
+RUN_GO="go"
+GO_FLAG="run"
+
 RUN_NODE="node"
 RUN_SHELL="sh"
 RUN_C="gcc"
@@ -16,6 +18,15 @@ function exec_cmd() {
   $cmd $file
 }
 
+function exec_with_flag() {
+  cmd=$1
+  flag=$2
+  file=$3
+
+  echo $cmd $flag $file\\n
+  $cmd $flag $file
+}
+
 function run() {
   if [ $# -eq 0 ]
   then
@@ -27,8 +38,8 @@ function run() {
   EXT=${FILENAME##*.}
 
   case $EXT in
+    "go")  exec_with_flag $RUN_GO $GO_FLAG ${@:3} ;;
     "py")  exec_cmd $RUN_PYTHON $FILENAME ;;
-    "go")  exec_cmd $RUN_GO $@ ;;
     "sh")  exec_cmd $RUN_SHELL $FILENAME ;;
     "c")   exec_cmd $RUN_C $FILENAME ;;
     "cpp") exec_cmd $RUN_CPP $FILENAME ;;
