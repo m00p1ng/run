@@ -1,30 +1,29 @@
-RUN_PYTHON="python"
-RUN_GO="go"
-GO_FLAG="run"
+declare -A RUN_
 
-RUN_NODE="node"
-RUN_SHELL="sh"
-RUN_C="gcc"
-RUN_CPP="g++"
-RUN_RUBY="ruby"
+RUN_[PYTHON]="python"
+RUN_[GO]="go run"
+RUN_[NODE]="node"
+RUN_[SHELL]="sh"
+RUN_[C]="gcc"
+RUN_[CPP]="g++"
+RUN_[RUBY]="ruby"
+RUN_[HASKELL]="runhaskell"
+RUN_[CLOJURE]="clj"
+RUN_[ELIXIR]="elixir"
 
 function exec_cmd() {
   cmd=$1
   file=$2
 
-  cc=$cmd' '$file
-  len=${#cc}
-  echo $cmd $file\\n
-  $cmd $file
-}
-
-function exec_with_flag() {
-  cmd=$1
-  flag=$2
-  file=$3
-
-  echo $cmd $flag $file\\n
-  $cmd $flag $file
+  if [[ -x "$(command -v $cmd)" ]]
+  then
+    echo $cmd $file
+    echo --------------------------------
+    $cmd $file
+  else
+    echo "\""$cmd"\" not found"
+    return 1
+  fi
 }
 
 function run() {
@@ -38,13 +37,16 @@ function run() {
   EXT=${FILENAME##*.}
 
   case $EXT in
-    "go")  exec_with_flag $RUN_GO $GO_FLAG ${@:3} ;;
-    "py")  exec_cmd $RUN_PYTHON $FILENAME ;;
-    "sh")  exec_cmd $RUN_SHELL $FILENAME ;;
-    "c")   exec_cmd $RUN_C $FILENAME ;;
-    "cpp") exec_cmd $RUN_CPP $FILENAME ;;
-    "js")  exec_cmd $RUN_NODE $FILENAME ;;
-    "rb")  exec_cmd $RUN_RUBY $FILENAME ;;
+    "go")  exec_cmd ${RUN_[GO]} $FILENAME ;;
+    "py")  exec_cmd ${RUN_[PYTHON]} $FILENAME ;;
+    "sh")  exec_cmd ${RUN_[SHELL]} $FILENAME ;;
+    "c")   exec_cmd ${RUN_[C]} $FILENAME ;;
+    "cpp") exec_cmd ${RUN_[CPP]} $FILENAME ;;
+    "js")  exec_cmd ${RUN_[NODE]} $FILENAME ;;
+    "rb")  exec_cmd ${RUN_[RUBY]} $FILENAME ;;
+    "hs")  exec_cmd ${RUN_[HASKELL]} $FILENAME ;;
+    "clj") exec_cmd ${RUN_[CLOJURE]} $FILENAME ;;
+    "ex")  exec_cmd ${RUN_[ELIXIR]} $FILENAME ;;
     *)
       echo "Not support extension"
       return 1
