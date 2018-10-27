@@ -1,7 +1,8 @@
 declare -A RUN_
 
 RUN_[PYTHON]="python"
-RUN_[GO]="go run"
+RUN_[GO]="go"
+GO_FLAG="run"
 RUN_[NODE]="node"
 RUN_[SHELL]="sh"
 RUN_[C]="gcc"
@@ -26,6 +27,15 @@ function exec_cmd() {
   fi
 }
 
+function exec_with_flag() {
+  cmd=$1
+  flag=$2
+  file=$3
+
+  echo $cmd $flag $file\\n
+  $cmd $flag $file
+}
+
 function run() {
   if [ $# -eq 0 ]
   then
@@ -37,7 +47,7 @@ function run() {
   EXT=${FILENAME##*.}
 
   case $EXT in
-    "go")  exec_cmd ${RUN_[GO]} $FILENAME ;;
+    "go")  exec_with_flag ${RUN_[GO]} $GO_FLAG $FILENAME ;;
     "py")  exec_cmd ${RUN_[PYTHON]} $FILENAME ;;
     "sh")  exec_cmd ${RUN_[SHELL]} $FILENAME ;;
     "c")   exec_cmd ${RUN_[C]} $FILENAME ;;
